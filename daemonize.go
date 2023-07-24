@@ -138,6 +138,7 @@ func (d *Daemonizer) HandleSignals(additionalHandler func() error) {
 		}
 		close(sigint)
 		_ = d.Close()
+		os.Exit(0)
 	}()
 }
 
