@@ -5,6 +5,7 @@ import (
 	"log"
 	"log/syslog"
 	"os"
+	"os/signal"
 	"syscall"
 )
 
@@ -122,6 +123,18 @@ func (d *Daemonizer) Close() error {
 	}
 	d.Log(LOG_INFO, "Daemon closed")
 	return err
+}
+
+func (d *Daemonizer) HandleSignals(additionalHandler func() error) {
+	sigint := make(chan os.Signal, 1)
+	signal.Notify(sigint, os.Interrupt, os.Kill, syscall.SIGTERM)
+	if additionalHandler != nil {
+		err := additionalHandler()
+		if err != nil {
+			d.Log(LOG_ERR, err)
+		}
+	}
+	_ = d.Close()
 }
 
 // NewDaemonizer creates a new Daemonizer instance and creates a writer to syslog
