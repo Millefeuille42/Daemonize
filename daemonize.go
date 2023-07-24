@@ -120,6 +120,7 @@ func (d *Daemonizer) Close() error {
 	if fErr != nil {
 		err = fErr
 	}
+	d.Log(LOG_INFO, "Daemon closed")
 	return err
 }
 
@@ -136,5 +137,6 @@ func NewDaemonizer() (*Daemonizer, error) {
 	}
 
 	d.SyslogWriter = syslogWriter
+	log.SetOutput(d.SyslogWriter)
 	return d, nil
 }
